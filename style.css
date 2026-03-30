@@ -20,17 +20,17 @@ body {
 /* Encabezado y Entradas */
 .header { 
     background: #2563eb; 
-    padding: 20px; 
+    padding: 15px; 
     display: flex; 
     flex-direction: column; 
-    gap: 12px; 
+    gap: 10px; 
 }
 
 h3 { 
     margin: 0; 
     color: white; 
     text-align: center; 
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
@@ -49,18 +49,18 @@ input[type="text"] {
 .adicionales {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 10px;
+    gap: 8px;
     background: rgba(255, 255, 255, 0.15);
-    padding: 15px;
+    padding: 12px;
     border-radius: 10px;
     color: white;
 }
 
 .adicionales label {
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 5px;
     cursor: pointer;
 }
 
@@ -75,42 +75,26 @@ input[type="text"] {
     padding: 8px;
     border-radius: 6px;
     border: none;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     background: white;
-    cursor: pointer;
 }
 
 /* Botón de Acción */
 button#btnCalcular { 
-    padding: 15px; 
+    padding: 14px; 
     background: #1e293b; 
     color: white; 
     border: none; 
     border-radius: 8px; 
     cursor: pointer; 
     font-weight: bold; 
-    font-size: 1rem;
+    font-size: 0.9rem;
     transition: all 0.2s ease;
-    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
-}
-
-button#btnCalcular:hover { 
-    background: #0f172a;
-    transform: translateY(-1px);
-}
-
-button#btnCalcular:active {
-    transform: translateY(1px);
-}
-
-button#btnCalcular:disabled {
-    background: #64748b;
-    cursor: not-allowed;
 }
 
 /* Mapa */
 #map { 
-    height: 320px; 
+    height: 300px; 
     width: 100%; 
     background: #e2e8f0;
 }
@@ -120,35 +104,18 @@ button#btnCalcular:disabled {
     display: flex; 
     justify-content: space-around; 
     align-items: center;
-    padding: 20px; 
+    padding: 15px; 
     background: #f8fafc; 
     border-top: 1px solid #e2e8f0; 
 }
 
 .res { 
-    font-size: 0.95rem; 
+    font-size: 0.85rem; 
     color: #475569;
-    text-align: center;
-}
-
-.res span#dist {
-    font-weight: bold;
-    color: #1e293b;
 }
 
 .res strong { 
     display: block;
     color: #2563eb; 
-    font-size: 1.4rem; 
-    margin-top: 4px;
-}
-
-/* Ajustes para pantallas pequeñas */
-@media (max-width: 400px) {
-    .adicionales {
-        grid-template-columns: 1fr;
-    }
-    .adicionales select {
-        grid-column: span 1;
-    }
+    font-size: 1.3rem; 
 }
