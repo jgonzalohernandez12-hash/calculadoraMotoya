@@ -5,7 +5,7 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 let markers = [];
 let routeLine = null;
 
-// 2. Geocoding restringido a Argentina
+// 2. Geocoding
 function geocode(text) {
     return new Promise((resolve) => {
         L.esri.Geocoding.geocode({
@@ -69,7 +69,7 @@ document.getElementById('btnCalcular').onclick = async () => {
             const km = ruta.distance / 1000;
             let subtotal = 0;
 
-            // --- DETERMINAR ZONA ---
+            // --- DETERMINAR ZONA Y PRECIO POR KM ---
             const esProvincia = inputO.includes("provincia") || inputD.includes("provincia") || 
                                inputO.includes("pba") || inputD.includes("pba") ||
                                inputO.includes("alsina") || inputO.includes("lanus") ||
@@ -77,7 +77,9 @@ document.getElementById('btnCalcular').onclick = async () => {
                                (!inputO.includes("caba") && !inputD.includes("caba") && !inputO.includes("buenos aires"));
 
             if (esProvincia) {
-                subtotal = km * 1300;
+                // AHORA: Si es más de 50km, el precio base por km es $1500
+                let precioBaseKM = (km >= 50) ? 1500 : 1300;
+                subtotal = km * precioBaseKM;
             } else {
                 subtotal = calcularTarifaCABA(km);
             }
@@ -87,15 +89,15 @@ document.getElementById('btnCalcular').onclick = async () => {
             if (document.getElementById('retorno').checked) subtotal += 6000;
             subtotal += parseInt(document.getElementById('demora').value);
 
-            // --- RECARGO ESCALONADO ACTUALIZADO (A PARTIR DE 50KM X2) ---
+            // --- RECARGO ESCALONADO ---
             let totalActual = subtotal;
             if (esProvincia) {
                 if (km >= 50) {
-                    totalActual = subtotal * 2.0; // +100% (Doble por superar 50km)
+                    totalActual = subtotal * 2.0; // Cobro doble (Vuelta vacía)
                 } else if (km > 30) {
-                    totalActual = subtotal * 1.60; // +60% (Media distancia)
+                    totalActual = subtotal * 1.60;
                 } else {
-                    totalActual = subtotal * 1.30; // +30% (Cercanía)
+                    totalActual = subtotal * 1.30;
                 }
             }
 
