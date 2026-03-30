@@ -3,44 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculadora Motoya</title>
+    <title>Calculadora Motoya ⚡</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-<div class="app-container">
-    <div class="header">
-        <h3>Cotizador de Viajes 🚕</h3>
-        <input type="text" id="origen" placeholder="Origen (Ej: Warnes 86, CABA)">
-        <input type="text" id="destino" placeholder="Destino (Ej: Campana, Buenos Aires)">
-        
-        <div class="adicionales">
-            <label><input type="checkbox" id="bulto"> Bulto (+$6000)</label>
-            <label><input type="checkbox" id="retorno"> Retorno (+$6000)</label>
-            <label><input type="checkbox" id="lluvia"> 🌧️ Lluvia (+50%)</label>
-            <select id="demora">
-                <option value="0">Sin demora</option>
-                <option value="6000">30 min demora (+$6000)</option>
-                <option value="12000">60 min demora (+$12000)</option>
-            </select>
+    <div class="app-container">
+        <div class="header">
+            <h3>Cotizador Motoya ⚡</h3>
+            <input type="text" id="origen" placeholder="Origen (Ej: Warnes 86, CABA)" autocomplete="off">
+            <input type="text" id="destino" placeholder="Destino (Ej: Campana)" autocomplete="off">
+            <div class="adicionales">
+                <label><input type="checkbox" id="bulto"> Bulto</label>
+                <label><input type="checkbox" id="retorno"> Retorno</label>
+                <label><input type="checkbox" id="lluvia"> 🌧️ Lluvia</label>
+                <select id="demora">
+                    <option value="0">Sin demora</option>
+                    <option value="6000">30 min (+$6000)</option>
+                    <option value="12000">60 min (+$12000)</option>
+                </select>
+            </div>
+            <button id="btnCalcular">CALCULAR AHORA</button>
         </div>
-        
-        <button id="btnCalcular">CALCULAR RUTA Y COSTO</button>
+        <div id="map"></div>
+        <div class="footer">
+            <div class="res">KM: <span id="dist">0</span></div>
+            <div class="res">TOTAL: <strong>$<span id="costo">0</span></strong></div>
+        </div>
     </div>
-    
-    <div id="map"></div>
-    
-    <div class="footer">
-        <div class="res">Distancia: <span id="dist">0</span> km</div>
-        <div class="res">Total: <strong>$<span id="costo">0</span></strong></div>
-    </div>
-</div>
-
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="https://unpkg.com/esri-leaflet@3.0.10/dist/esri-leaflet.js"></script>
-<script src="https://unpkg.com/esri-leaflet-geocoder@3.1.4/dist/esri-leaflet-geocoder.js"></script>
-<script src="script.js"></script>
-
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/esri-leaflet@3.0.10/dist/esri-leaflet.js"></script>
+    <script src="https://unpkg.com/esri-leaflet-geocoder@3.1.4/dist/esri-leaflet-geocoder.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
