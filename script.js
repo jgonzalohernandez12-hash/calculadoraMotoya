@@ -1,20 +1,11 @@
-// 1. Inicialización del Mapa
 const map = L.map('map').setView([-34.6037, -58.3816], 11);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-
 let markers = [];
 let routeLine = null;
 
-// 2. Geocoding
-function geocode(text) {
+async function geocode(text) {
     return new Promise((resolve) => {
-        L.esri.Geocoding.geocode({
-            requestParams: {
-                location: "-34.6037, -58.3816",
-                distance: 50000,
-                countryCode: "ARG"
-            }
-        }).text(text).run(function (err, results) {
+        L.esri.Geocoding.geocode().text(text).run(function (err, results) {
             if (results && results.results.length > 0) {
                 resolve(results.results[0].latlng);
             } else { resolve(null); }
@@ -22,98 +13,51 @@ function geocode(text) {
     });
 }
 
-// 3. Obtener ruta real
-async function obtenerRutaReal(p1, p2) {
-    const url = `https://router.project-osrm.org/route/v1/driving/${p1.lng},${p1.lat};${p2.lng},${p2.lat}?overview=full&geometries=geojson`;
-    const response = await fetch(url);
-    return await response.json();
-}
-
-// 4. Tarifas CABA
-function calcularTarifaCABA(km) {
-    if (km <= 3) return 11000;
-    if (km <= 6) return 13000;
-    if (km <= 9) return 17000;
-    if (km <= 12) return 20000;
-    if (km <= 15) return 22000;
-    if (km <= 20) return 25000;
-    return 25000 + ((km - 20) * 1300); 
-}
-
-// 5. Lógica de Cálculo
 document.getElementById('btnCalcular').onclick = async () => {
-    const inputO = document.getElementById('origen').value.toLowerCase();
-    const inputD = document.getElementById('destino').value.toLowerCase();
-    
-    if (!inputO || !inputD) return alert("Por favor, ingresá origen y destino");
+    const inputO = document.getElementById('origen').value;
+    const inputD = document.getElementById('destino').value;
+    if (!inputO || !inputD) return alert("Ingresá origen y destino");
 
     const btn = document.getElementById('btnCalcular');
     btn.innerText = "CALCULANDO...";
     btn.disabled = true;
 
     try {
-        const timeout = new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout")), 8000));
-        const coords1 = await Promise.race([geocode(inputO), timeout]);
-        const coords2 = await Promise.race([geocode(inputD), timeout]);
+        const c1 = await geocode(inputO);
+        const c2 = await geocode(inputD);
 
-        if (coords1 && coords2) {
+        if (c1 && c2) {
             markers.forEach(m => map.removeLayer(m));
             if (routeLine) map.removeLayer(routeLine);
 
-            const data = await obtenerRutaReal(coords1, coords2);
+            const res = await fetch(`https://router.project-osrm.org/route/v1/driving/${c1.lng},${c1.lat};${c2.lng},${c2.lat}?overview=full&geometries=geojson`);
+            const data = await res.json();
             const ruta = data.routes[0];
-            routeLine = L.geoJSON(ruta.geometry, { style: { color: '#e94560', weight: 6 } }).addTo(map);
-            markers = [L.marker(coords1).addTo(map), L.marker(coords2).addTo(map)];
-            map.fitBounds(routeLine.getBounds(), { padding: [40, 40] });
+
+            routeLine = L.geoJSON(ruta.geometry, { style: { color: '#2563eb', weight: 6 } }).addTo(map);
+            markers = [L.marker(c1).addTo(map), L.marker(c2).addTo(map)];
+            map.fitBounds(routeLine.getBounds(), { padding: [30, 30] });
 
             const km = ruta.distance / 1000;
-            let subtotal = 0;
+            const esLargo = km >= 50;
+            let precioBase = esLargo ? (km * 1500) : (km * 1300);
+            
+            // Recargos
+            if (km > 30 && km < 50) precioBase *= 1.60;
+            if (km >= 50) precioBase *= 2.0; // Vuelta vacía
 
-            // --- DETERMINAR ZONA Y PRECIO POR KM ---
-            const esProvincia = inputO.includes("provincia") || inputD.includes("provincia") || 
-                               inputO.includes("pba") || inputD.includes("pba") ||
-                               inputO.includes("alsina") || inputO.includes("lanus") ||
-                               inputD.includes("campana") ||
-                               (!inputO.includes("caba") && !inputD.includes("caba") && !inputO.includes("buenos aires"));
-
-            if (esProvincia) {
-                // AHORA: Si es más de 50km, el precio base por km es $1500
-                let precioBaseKM = (km >= 50) ? 1500 : 1300;
-                subtotal = km * precioBaseKM;
-            } else {
-                subtotal = calcularTarifaCABA(km);
-            }
-
-            // --- SUMAR ADICIONALES FIJOS ---
-            if (document.getElementById('bulto').checked) subtotal += 6000;
-            if (document.getElementById('retorno').checked) subtotal += 6000;
-            subtotal += parseInt(document.getElementById('demora').value);
-
-            // --- RECARGO ESCALONADO ---
-            let totalActual = subtotal;
-            if (esProvincia) {
-                if (km >= 50) {
-                    totalActual = subtotal * 2.0; // Cobro doble (Vuelta vacía)
-                } else if (km > 30) {
-                    totalActual = subtotal * 1.60;
-                } else {
-                    totalActual = subtotal * 1.30;
-                }
-            }
-
-            // --- RECARGO POR LLUVIA (+50%) ---
-            if (document.getElementById('lluvia').checked) {
-                totalActual = totalActual * 1.50;
-            }
+            if (document.getElementById('bulto').checked) precioBase += 6000;
+            if (document.getElementById('retorno').checked) precioBase += 6000;
+            precioBase += parseInt(document.getElementById('demora').value);
+            if (document.getElementById('lluvia').checked) precioBase *= 1.50;
 
             document.getElementById('dist').innerText = km.toFixed(2);
-            document.getElementById('costo').innerText = Math.round(totalActual).toLocaleString('es-AR');
-
+            document.getElementById('costo').innerText = Math.round(precioBase).toLocaleString('es-AR');
         } else {
-            alert("No se encontró la dirección.");
+            alert("No se encontró una de las direcciones. Intentá ser más específico (ej: Warnes 86, CABA)");
         }
-    } catch (error) {
-        alert("Error de conexión. Reintentá.");
+    } catch (e) {
+        alert("Error de red. Verificá tu conexión.");
     } finally {
         btn.innerText = "CALCULAR RUTA Y COSTO";
         btn.disabled = false;
