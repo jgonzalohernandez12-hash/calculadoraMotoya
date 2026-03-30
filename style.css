@@ -1,0 +1,154 @@
+/* Configuración General */
+body { 
+    background: #0f172a; 
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+    display: flex; 
+    justify-content: center; 
+    padding: 10px;
+    margin: 0;
+}
+
+.app-container { 
+    width: 100%; 
+    max-width: 450px; 
+    background: white; 
+    border-radius: 16px; 
+    overflow: hidden; 
+    box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); 
+}
+
+/* Encabezado y Entradas */
+.header { 
+    background: #2563eb; 
+    padding: 20px; 
+    display: flex; 
+    flex-direction: column; 
+    gap: 12px; 
+}
+
+h3 { 
+    margin: 0; 
+    color: white; 
+    text-align: center; 
+    font-size: 1.2rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+input[type="text"] { 
+    padding: 12px; 
+    border: none; 
+    border-radius: 8px; 
+    font-size: 14px; 
+    outline: none; 
+    background: #f8fafc;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+}
+
+/* Sección de Adicionales */
+.adicionales {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    background: rgba(255, 255, 255, 0.15);
+    padding: 15px;
+    border-radius: 10px;
+    color: white;
+}
+
+.adicionales label {
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+}
+
+.adicionales input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
+.adicionales select {
+    grid-column: span 2;
+    padding: 8px;
+    border-radius: 6px;
+    border: none;
+    font-size: 0.9rem;
+    background: white;
+    cursor: pointer;
+}
+
+/* Botón de Acción */
+button#btnCalcular { 
+    padding: 15px; 
+    background: #1e293b; 
+    color: white; 
+    border: none; 
+    border-radius: 8px; 
+    cursor: pointer; 
+    font-weight: bold; 
+    font-size: 1rem;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+}
+
+button#btnCalcular:hover { 
+    background: #0f172a;
+    transform: translateY(-1px);
+}
+
+button#btnCalcular:active {
+    transform: translateY(1px);
+}
+
+button#btnCalcular:disabled {
+    background: #64748b;
+    cursor: not-allowed;
+}
+
+/* Mapa */
+#map { 
+    height: 320px; 
+    width: 100%; 
+    background: #e2e8f0;
+}
+
+/* Footer de Resultados */
+.footer { 
+    display: flex; 
+    justify-content: space-around; 
+    align-items: center;
+    padding: 20px; 
+    background: #f8fafc; 
+    border-top: 1px solid #e2e8f0; 
+}
+
+.res { 
+    font-size: 0.95rem; 
+    color: #475569;
+    text-align: center;
+}
+
+.res span#dist {
+    font-weight: bold;
+    color: #1e293b;
+}
+
+.res strong { 
+    display: block;
+    color: #2563eb; 
+    font-size: 1.4rem; 
+    margin-top: 4px;
+}
+
+/* Ajustes para pantallas pequeñas */
+@media (max-width: 400px) {
+    .adicionales {
+        grid-template-columns: 1fr;
+    }
+    .adicionales select {
+        grid-column: span 1;
+    }
+}
